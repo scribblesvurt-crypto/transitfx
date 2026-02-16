@@ -274,8 +274,14 @@ export default defineContentScript({
       }, duration);
     }
 
-    // Event delegation for link clicks
+    // Event delegation for link clicks.
+    // Uses capture phase to intercept before SPA routers, then re-dispatches
+    // a synthetic click to let them handle it. If the SPA router calls
+    // pushState/replaceState, we know it's an SPA nav and we bail out.
     document.addEventListener('click', (e) => {
+      // Skip our own re-dispatched synthetic events
+      if ((e as any)._transitfxSynthetic) return;
+
       const target = e.target as HTMLElement;
       const href = isNavigatingLink(target);
       if (!href) return;
@@ -284,8 +290,49 @@ export default defineContentScript({
       const isNewTab = anchor.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey;
       if (isNewTab) return;
 
+      // Stop the real click from navigating
       e.preventDefault();
+      e.stopImmediatePropagation();
 
+      // Temporarily intercept pushState/replaceState to detect SPA navigation
+      let spaNavigated = false;
+      const origPushState = history.pushState;
+      const origReplaceState = history.replaceState;
+
+      history.pushState = function(...args: any[]) {
+        spaNavigated = true;
+        return origPushState.apply(history, args);
+      };
+      history.replaceState = function(...args: any[]) {
+        spaNavigated = true;
+        return origReplaceState.apply(history, args);
+      };
+
+      // Re-dispatch a synthetic click so SPA routers can handle it.
+      // dispatchEvent is synchronous — all handlers fire before it returns.
+      // Untrusted (synthetic) events don't trigger browser default navigation.
+      const synthetic = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        ctrlKey: e.ctrlKey,
+        shiftKey: e.shiftKey,
+        altKey: e.altKey,
+        metaKey: e.metaKey,
+      });
+      (synthetic as any)._transitfxSynthetic = true;
+      anchor.dispatchEvent(synthetic);
+
+      // Restore original methods
+      history.pushState = origPushState;
+      history.replaceState = origReplaceState;
+
+      if (spaNavigated) {
+        // SPA router handled it — don't interfere
+        return;
+      }
+
+      // Regular full-page navigation — play transition
       playTransition(href, () => {
         window.location.href = href;
       });
