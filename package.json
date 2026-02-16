@@ -1,0 +1,21 @@
+{
+  "name": "browser-effect-extension",
+  "description": "Cyberpunk page transition effects for your browser",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt --browser firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build --browser firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip --browser firefox",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5",
+    "typescript": "^5.7.0",
+    "wxt": "^0.19.0"
+  }
+}

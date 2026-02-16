@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransitFX</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 380px;
+      min-height: 440px;
+      background: #0a0a0a;
+      color: #00ff41;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 13px;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0,255,65,0.2);
+      margin-bottom: 14px;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: normal;
+      letter-spacing: 2px;
+      text-shadow: 0 0 5px rgba(0,255,65,0.5);
+    }
+
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #1a1a1a;
+      border: 1px solid rgba(0,255,65,0.3);
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 2px; bottom: 2px;
+      background: #333;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      border-color: #00ff41;
+      box-shadow: 0 0 5px rgba(0,255,65,0.3);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      background: #00ff41;
+      box-shadow: 0 0 5px #00ff41;
+    }
+
+    /* Pack sections */
+    .pack {
+      margin-bottom: 14px;
+    }
+
+    .pack-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .pack-name {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #ffb000;
+      text-shadow: 0 0 5px rgba(255,176,0,0.3);
+    }
+
+    .pack-desc {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .effect-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5px;
+    }
+
+    .effect-btn {
+      background: #0d0d0d;
+      border: 1px solid rgba(0,255,65,0.12);
+      color: #00aa2a;
+      font-family: inherit;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      padding: 8px 5px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .effect-btn:hover {
+      border-color: rgba(0,255,65,0.4);
+      color: #00ff41;
+    }
+
+    .effect-btn.active {
+      border-color: #00ff41;
+      color: #00ff41;
+      text-shadow: 0 0 5px rgba(0,255,65,0.5);
+      box-shadow: 0 0 5px rgba(0,255,65,0.1);
+    }
+
+    /* Random button */
+    .random-row {
+      margin-bottom: 14px;
+    }
+
+    .random-btn {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid rgba(0,255,65,0.12);
+      color: #00aa2a;
+      font-family: inherit;
+      font-size: 12px;
+      letter-spacing: 2px;
+      padding: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .random-btn:hover {
+      border-color: rgba(0,255,65,0.4);
+      color: #00ff41;
+    }
+
+    .random-btn.active {
+      border-color: #00e5ff;
+      color: #00e5ff;
+      text-shadow: 0 0 5px rgba(0,229,255,0.5);
+      box-shadow: 0 0 5px rgba(0,229,255,0.1);
+    }
+
+    /* Speed */
+    .section {
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #ffb000;
+      text-shadow: 0 0 5px rgba(255,176,0,0.3);
+      margin-bottom: 6px;
+    }
+
+    .speed-controls {
+      display: flex;
+      gap: 5px;
+    }
+
+    .speed-btn {
+      flex: 1;
+      background: #0d0d0d;
+      border: 1px solid rgba(0,255,65,0.12);
+      color: #00aa2a;
+      font-family: inherit;
+      font-size: 12px;
+      padding: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .speed-btn:hover {
+      border-color: rgba(0,255,65,0.4);
+    }
+
+    .speed-btn.active {
+      border-color: #00e5ff;
+      color: #00e5ff;
+      text-shadow: 0 0 5px rgba(0,229,255,0.5);
+    }
+
+    /* Footer */
+    .footer {
+      padding-top: 12px;
+      border-top: 1px solid rgba(0,255,65,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer a {
+      color: #00aa2a;
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover { color: #00e5ff; }
+
+    .support-link {
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border: 1px solid #ffb000;
+      color: #ffb000;
+      text-shadow: 0 0 5px rgba(255,176,0,0.3);
+      background: transparent;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .support-link:hover {
+      background: rgba(255,176,0,0.1);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>TRANSITFX</h1>
+    <label class="toggle">
+      <input type="checkbox" id="toggle-enabled" checked>
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="random-row">
+    <button class="random-btn" id="random-btn">RANDOM</button>
+  </div>
+
+  <div id="packs-container"></div>
+
+  <div class="section">
+    <div class="section-label">> SPEED</div>
+    <div class="speed-controls" id="speed-controls">
+      <button class="speed-btn" data-speed="fast">FAST</button>
+      <button class="speed-btn active" data-speed="normal">NORMAL</button>
+      <button class="speed-btn" data-speed="slow">SLOW</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">> PAGE FILTER</div>
+    <div class="speed-controls" id="filter-controls" style="flex-wrap:wrap;gap:5px;">
+      <button class="speed-btn" data-filter="off">OFF</button>
+      <button class="speed-btn" data-filter="green-terminal">GREEN</button>
+      <button class="speed-btn" data-filter="blue-terminal">BLUE</button>
+      <button class="speed-btn" data-filter="pink-terminal">PINK</button>
+      <button class="speed-btn" data-filter="yellow-terminal">YELLOW</button>
+      <button class="speed-btn" data-filter="crt">CRT</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="#" id="options-link">OPTIONS</a>
+    <a href="https://buymeacoffee.com/samblakeman" target="_blank" class="support-link" id="support-btn">SUPPORT</a>
+  </div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

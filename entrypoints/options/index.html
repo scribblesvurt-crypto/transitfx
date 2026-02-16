@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransitFX — Options</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      color: #00ff41;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 40px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: normal;
+      letter-spacing: 3px;
+      text-shadow: 0 0 5px rgba(0,255,65,0.5);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #00aa2a;
+      letter-spacing: 2px;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+      padding: 20px;
+      border: 1px solid rgba(0,255,65,0.15);
+      background: #0d0d0d;
+    }
+
+    .section-title {
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #ffb000;
+      text-shadow: 0 0 5px rgba(255,176,0,0.3);
+      margin-bottom: 16px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .row:last-child {
+      margin-bottom: 0;
+    }
+
+    .row-label {
+      font-size: 14px;
+      color: #00aa2a;
+    }
+
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #1a1a1a;
+      border: 1px solid rgba(0,255,65,0.3);
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 2px; bottom: 2px;
+      background: #333;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      border-color: #00ff41;
+      box-shadow: 0 0 5px rgba(0,255,65,0.3);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      background: #00ff41;
+      box-shadow: 0 0 5px #00ff41;
+    }
+
+    select, input[type="text"], textarea {
+      background: #1a1a1a;
+      border: 1px solid rgba(0,255,65,0.2);
+      color: #00ff41;
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, input[type="text"]:focus, textarea:focus {
+      border-color: #00e5ff;
+    }
+
+    select option, select optgroup {
+      background: #0d0d0d;
+      font-size: 13px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      resize: vertical;
+      margin-top: 10px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #555;
+      margin-top: 6px;
+    }
+
+    .save-status {
+      font-size: 13px;
+      color: #00e5ff;
+      letter-spacing: 2px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .save-status.visible {
+      opacity: 1;
+    }
+
+    .keyboard-hint {
+      font-size: 12px;
+      color: #555;
+      letter-spacing: 1px;
+      margin-top: 24px;
+      text-align: center;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <h1>TRANSITFX // OPTIONS</h1>
+  <div class="subtitle">PAGE TRANSITION EFFECTS</div>
+
+  <div class="section">
+    <div class="section-title">> GENERAL</div>
+    <div class="row">
+      <span class="row-label">Extension Enabled</span>
+      <label class="toggle"><input type="checkbox" id="opt-enabled"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="row">
+      <span class="row-label">Selected Effect</span>
+      <select id="opt-effect"></select>
+    </div>
+    <div class="row">
+      <span class="row-label">Speed</span>
+      <select id="opt-speed">
+        <option value="fast">Fast (0.6x)</option>
+        <option value="normal">Normal (1.0x)</option>
+        <option value="slow">Slow (1.5x)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">> PAGE FILTER</div>
+    <div class="row">
+      <span class="row-label">Page Filter</span>
+      <select id="opt-page-filter">
+        <option value="off">Off</option>
+        <option value="green-terminal">Green Terminal</option>
+        <option value="blue-terminal">Blue Terminal</option>
+        <option value="pink-terminal">Pink Terminal</option>
+        <option value="yellow-terminal">Yellow Terminal</option>
+        <option value="crt">CRT Scanlines</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">> SITE RULES</div>
+    <div class="row">
+      <span class="row-label">Mode</span>
+      <select id="opt-site-mode">
+        <option value="all">All Sites</option>
+        <option value="allowlist">Allowlist Only</option>
+        <option value="blocklist">Blocklist</option>
+      </select>
+    </div>
+    <div>
+      <textarea id="opt-site-list" placeholder="One domain per line, e.g.&#10;example.com&#10;news.ycombinator.com"></textarea>
+      <div class="hint">One domain per line. Matches if the hostname contains the text.</div>
+    </div>
+  </div>
+
+  <div class="save-status" id="save-status">SETTINGS SAVED</div>
+
+  <div class="keyboard-hint">
+    SKIP EFFECT: Alt+Shift+S &nbsp;&nbsp;|&nbsp;&nbsp; TOGGLE: Alt+Shift+T &nbsp;&nbsp;|&nbsp;&nbsp; ESC to skip during transition
+    <br><br>
+    <a href="https://buymeacoffee.com/samblakeman" target="_blank" style="color:#ffb000;text-decoration:none;letter-spacing:2px;">BUY ME A COFFEE</a>
+  </div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>
